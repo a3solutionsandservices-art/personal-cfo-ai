@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal CFO AI - Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        h1 { color: #333; font-size: 2.5em; margin-bottom: 10px; }
+        .subtitle { color: #666; font-size: 1.2em; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .stat-label {
+            color: #888;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+        .stat-value {
+            color: #333;
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        #status { margin: 20px 0; padding: 15px; background: #f0f9ff; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Personal CFO AI</h1>
+            <p class="subtitle">Your Brutal Financial Analysis System</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">Net Worth</div>
+                <div class="stat-value" id="netWorth">$0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Accounts</div>
+                <div class="stat-value" id="accountCount">0</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Quick Actions</h2>
+            <div id="status">Ready to load data...</div>
+            <button class="btn" onclick="loadSampleData()">🎲 Load Sample Data (5 Accounts)</button>
+            <button class="btn" onclick="viewAccounts()">👁️ View All Accounts</button>
+            <button class="btn" onclick="clearData()">🗑️ Clear All Data</button>
+            
+            <div id="accountsList" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API = 'http://localhost:8001';
+        
+        async function loadSampleData() {
+            document.getElementById('status').innerHTML = '⏳ Loading sample data...';
+            
+            const accounts = [
+                { name: "Chase Checking", account_type: "checking", institution: "Chase", current_balance: 5000 },
+                { name: "Chase Savings", account_type: "savings", institution: "Chase", current_balance: 15000 },
+                { name: "Schwab Brokerage", account_type: "brokerage", institution: "Schwab", current_balance: 50000 },
+                { name: "JP Morgan Investment", account_type: "investment", institution: "JP Morgan", current_balance: 75000 },
+                { name: "Chase Sapphire Card", account_type: "credit_card", institution: "Chase", current_balance: -2500 }
+            ];
+            
+            for (const acc of accounts) {
+                await fetch(`${API}/api/accounts/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(acc)
+                });
+            }
+            
+            document.getElementById('status').innerHTML = '✅ Loaded 5 sample accounts!';
+            viewAccounts();
+        }
+        
+        async function viewAccounts() {
+            const response = await fetch(`${API}/api/accounts/`);
+            const accounts = await response.json();
+            
+            const netWorth = accounts.reduce((sum, a) => sum + a.current_balance, 0);
+            document.getElementById('netWorth').textContent = `$${netWorth.toLocaleString()}`;
+            document.getElementById('accountCount').textContent = accounts.length;
+            
+            const html = `
+                <h3 style="margin-top: 30px;">Your Accounts</h3>
+                <table style="width: 100%; margin-top: 15px; border-collapse: collapse;">
+                    <tr style="background: #f3f4f6;">
+                        <th style="padding: 10px; text-align: left;">Name</th>
+                        <th style="padding: 10px; text-align: left;">Type</th>
+                        <th style="padding: 10px; text-align: left;">Institution</th>
+                        <th style="padding: 10px; text-align: right;">Balance</th>
+                    </tr>
+                    ${accounts.map(a => `
+                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 10px;"><strong>${a.name}</strong></td>
+                            <td style="padding: 10px;">${a.account_type}</td>
+                            <td style="padding: 10px;">${a.institution || '—'}</td>
+                            <td style="padding: 10px; text-align: right;"><strong>$${a.current_balance.toLocaleString()}</strong></td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+            
+            document.getElementById('accountsList').innerHTML = html;
+        }
+        
+        async function clearData() {
+            if (confirm('Delete all accounts? This cannot be undone.')) {
+                const response = await fetch(`${API}/api/accounts/`);
+                const accounts = await response.json();
+                
+                for (const acc of accounts) {
+                    await fetch(`${API}/api/accounts/${acc.id}?force=true`, { method: 'DELETE' });
+                }
+                
+                document.getElementById('status').innerHTML = '🗑️ All accounts deleted';
+                viewAccounts();
+            }
+        }
+        
+        // Load on page load
+        viewAccounts();
+    </script>
+</body>
+</html>
