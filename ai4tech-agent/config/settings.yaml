@@ -39,13 +39,13 @@ transcription:
 
 # --- Delivery (PRD §6.8) ---
 delivery:
-  target: markdown                  # markdown | email
+  target: email                     # markdown | email
   output_dir: ./out
   # SMTP settings consumed only when target == email; secrets come from .env.
   email:
-    from_addr: ai4tech-agent@example.com
-    to_addr: lead@example.com
-    smtp_host: smtp.example.com
+    from_addr: yelukati@gmail.com
+    to_addr: yelukati@gmail.com
+    smtp_host: smtp.gmail.com
     smtp_port: 587
 
 # --- Reliability / cost (PRD §8, §14) ---

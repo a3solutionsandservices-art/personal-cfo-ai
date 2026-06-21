@@ -5,7 +5,7 @@ name: ai4tech-scheduled-run
 
 on:
   schedule:
-    - cron: "0 13 * * 1" # Mondays 13:00 UTC — weekly digest
+    - cron: "0 12 * * *" # Daily 12:00 UTC — 7 am EST / 8 am EDT
   workflow_dispatch: {}
 
 jobs:
@@ -36,6 +36,8 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
         run: ai4tech --verbose run
 
       - name: Upload brief
