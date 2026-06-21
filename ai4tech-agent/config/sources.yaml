@@ -8,7 +8,7 @@
 # items already in the StateStore (by GUID) are always skipped (FR-SRC-2).
 
 defaults:
-  lookback_days: 14
+  lookback_days: 30
 
 feeds:
   - id: practical-ai
@@ -26,12 +26,12 @@ feeds:
   - id: cognitive-revolution
     type: podcast
     enabled: true
-    url: https://feeds.megaphone.fm/cognitivrevolution
+    url: https://feeds.transistor.fm/the-cognitive-revolution
     show: The Cognitive Revolution
 
   - id: dwarkesh-podcast
     type: podcast
-    enabled: true
+    enabled: false   # audio is paywalled (HTTP 403); re-enable if a public feed is found
     url: https://www.dwarkeshpatel.com/feed
     show: Dwarkesh Podcast
 
