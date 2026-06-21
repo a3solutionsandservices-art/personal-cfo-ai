@@ -39,6 +39,7 @@ class WhisperTranscriber:
 
     def transcribe(self, item: SourceItem) -> Transcript:  # pragma: no cover - network
         import os
+        import subprocess
         import tempfile
         import urllib.request
 
@@ -50,20 +51,50 @@ class WhisperTranscriber:
         with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
             tmp_path = tmp.name
 
+        compressed_path: str | None = None
         try:
             urllib.request.urlretrieve(item.audio_url, tmp_path)
             size = os.path.getsize(tmp_path)
+
+            audio_path = tmp_path
             if size > self.WHISPER_MAX_BYTES:
-                raise ValueError(
-                    f"Audio file {size / 1e6:.1f} MB exceeds Whisper 25 MB limit; "
-                    "skipping transcription"
+                # Compress to mono MP3 at 32 kbps (speech-adequate quality).
+                # Reduces a 45 MB file to ~4 MB and a 130 MB file to ~12 MB.
+                # ffmpeg is pre-installed on ubuntu-latest GitHub Actions runners.
+                with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as ctmp:
+                    compressed_path = ctmp.name
+                result = subprocess.run(
+                    [
+                        "ffmpeg", "-y", "-i", tmp_path,
+                        "-ac", "1",          # mono
+                        "-ar", "16000",      # 16 kHz — Whisper's native rate
+                        "-b:a", "32k",       # 32 kbps bitrate
+                        "-f", "mp3",
+                        compressed_path,
+                    ],
+                    capture_output=True,
                 )
-            with open(tmp_path, "rb") as fh:
+                if result.returncode != 0:
+                    raise RuntimeError(
+                        f"ffmpeg compression failed (exit {result.returncode}): "
+                        + result.stderr.decode(errors="replace")[-500:]
+                    )
+                compressed_size = os.path.getsize(compressed_path)
+                if compressed_size > self.WHISPER_MAX_BYTES:
+                    raise ValueError(
+                        f"Compressed audio {compressed_size / 1e6:.1f} MB still exceeds "
+                        "Whisper 25 MB limit; skipping transcription"
+                    )
+                audio_path = compressed_path
+
+            with open(audio_path, "rb") as fh:
                 resp = self._client.audio.transcriptions.create(
                     model=self.model, file=fh, response_format="verbose_json"
                 )
         finally:
             os.unlink(tmp_path)
+            if compressed_path and os.path.exists(compressed_path):
+                os.unlink(compressed_path)
         segments = [
             {
                 "start_s": float(getattr(s, "start", 0.0)),
