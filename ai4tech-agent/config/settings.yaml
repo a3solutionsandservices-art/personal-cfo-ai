@@ -1,0 +1,55 @@
+# Run-level tunables (PRD §6.5, §6.7, §10). All knobs the lead may adjust
+# without touching code live here.
+
+# --- Scoring (PRD §6.5) ---
+scoring:
+  # final = weight_theme * (w_r*relevance + w_n*novelty + w_a*actionability)
+  weight_relevance: 0.4
+  weight_novelty: 0.3
+  weight_actionability: 0.3
+  # Gate: only segments at/above this final score proceed to interpretation.
+  threshold: 0.6
+  # Confidence floor below which a classification is dropped before scoring.
+  classify_confidence_floor: 0.45
+  # Embedding cosine similarity above which a signal is treated as "seen"
+  # (novelty suppressed). PRD §6.5 FR-SCO-3.
+  novelty_similarity_threshold: 0.86
+
+# --- Brief assembly (PRD §6.7) ---
+brief:
+  max_actions: 12          # run-level attention cap (FR-BRF-3)
+  dedup_similarity: 0.9    # near-duplicate action merge threshold (FR-BRF-2)
+
+# --- Segmentation (PRD §6.3) ---
+segmenter:
+  target_words: 220        # ~1-4 minutes of speech
+  min_words: 60
+
+# --- Models (PRD §10). Model IDs are config, never hardcoded in stages. ---
+models:
+  classifier: claude-haiku-4-5      # high-volume, cheap (FR-CLF-2)
+  scorer: claude-haiku-4-5          # high-volume, cheap (FR-SCO-2)
+  interpreter: claude-sonnet-4-6    # synthesis; use claude-opus-4-8 for max quality (FR-INT-1)
+  embeddings: hash-256              # offline default; swap for a hosted endpoint
+
+# --- Transcription (PRD §6.2) ---
+transcription:
+  provider: whisper                 # whisper | deepgram | assemblyai (adapter-selected)
+  whisper_model: whisper-1
+
+# --- Delivery (PRD §6.8) ---
+delivery:
+  target: email                     # markdown | email
+  output_dir: ./out
+  # SMTP settings consumed only when target == email; secrets come from .env.
+  email:
+    from_addr: yelukati@gmail.com
+    to_addr: yelukati@gmail.com
+    smtp_host: smtp.gmail.com
+    smtp_port: 587
+
+# --- Reliability / cost (PRD §8, §14) ---
+reliability:
+  max_retries: 4
+  backoff_base_s: 2.0
+  per_episode_budget_usd: 2.50      # AC-6 cost ceiling; reported per run

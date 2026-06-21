@@ -1,0 +1,15 @@
+{
+  "_comment": "Hand-labelled expected theme per segment index (AC-1). 'noise' segments must stay below the score threshold (AC-2).",
+  "labels": [
+    "noise",
+    "sdlc-inner-loop",
+    "sdlc-outer-loop",
+    "pdlc-ai",
+    "noise",
+    "ai-measurement",
+    "ai-governance",
+    "payments-ai-data-gov",
+    "noise",
+    "model-vendor"
+  ]
+}

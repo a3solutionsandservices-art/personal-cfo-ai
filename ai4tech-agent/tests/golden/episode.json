@@ -1,0 +1,68 @@
+{
+  "item_guid": "golden-ep-001",
+  "show": "Golden Test Podcast",
+  "title": "AI across the lifecycle — a worked episode",
+  "provider": "fixture",
+  "segments": [
+    {
+      "start_s": 0.0,
+      "end_s": 35.0,
+      "speaker": "host",
+      "text": "Welcome back to the show, thanks to our sponsor, and don't forget to like and subscribe. Today we have a great guest and a fun chat ahead, grab a coffee and settle in."
+    },
+    {
+      "start_s": 35.0,
+      "end_s": 240.0,
+      "speaker": "guest",
+      "text": "On agentic coding we ran a benchmark across 4 enterprise repos and measured the failure modes of autonomous edit-run-test loops. The cost model matters: token spend per developer rose 30 percent, so we added autonomy controls and a budget guardrail in the agentic IDE workspace to keep code generation bounded."
+    },
+    {
+      "start_s": 240.0,
+      "end_s": 430.0,
+      "speaker": "guest",
+      "text": "For the outer loop we built an AI code review pattern wired into the CI pipeline, plus AI assisted testing and QA before release. The evidence over 6 weeks showed the review and test stages catching regressions earlier in continuous integration and deployment."
+    },
+    {
+      "start_s": 430.0,
+      "end_s": 600.0,
+      "speaker": "guest",
+      "text": "We moved product discovery toward spec-driven development. The requirements are captured as an ontology so the roadmap and design flow from a shared specification. Across 3 teams the spec-driven product development lifecycle reduced rework in discovery."
+    },
+    {
+      "start_s": 600.0,
+      "end_s": 760.0,
+      "speaker": "host",
+      "text": "Anyway, totally off topic, but the weather has been wild lately and I finally tried that new ramen place downtown. Ten out of ten, would recommend the spicy bowl."
+    },
+    {
+      "start_s": 760.0,
+      "end_s": 980.0,
+      "speaker": "guest",
+      "text": "On measurement we designed a delivery scorecard with metrics tying AI usage to throughput, quality and speed, with evidence on business outcomes. One metric tracked merged change throughput up 18 percent against a baseline cohort."
+    },
+    {
+      "start_s": 980.0,
+      "end_s": 1180.0,
+      "speaker": "guest",
+      "text": "Governance needs real guardrails. We defined an evaluation gate and risk controls for autonomous agents in the delivery lifecycle, with a policy and assurance pattern that blocks an agent action until the eval passes. This is a concrete control, not ethics commentary."
+    },
+    {
+      "start_s": 1180.0,
+      "end_s": 1360.0,
+      "speaker": "guest",
+      "text": "Under payments constraints we handle AI under PCI and tokenization rules. Cardholder data never reaches the model; a redaction pass strips bank details and PII before any prompt leaves the regulated environment, a data-handling pattern specific to payments."
+    },
+    {
+      "start_s": 1360.0,
+      "end_s": 1430.0,
+      "speaker": "host",
+      "text": "Quick reminder to check out our merch store and join the listener community, we love the support, it really helps the show keep going."
+    },
+    {
+      "start_s": 1430.0,
+      "end_s": 1620.0,
+      "speaker": "guest",
+      "text": "On the vendor landscape a new model dropped with a pricing shift that changes the build versus buy calculus for our platform decisions. The capability jump in long context could move several workloads from a custom stack to a vendor model."
+    }
+  ]
+}
