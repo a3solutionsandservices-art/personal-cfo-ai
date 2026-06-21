@@ -23,6 +23,24 @@ feeds:
     url: https://api.substack.com/feed/podcast/1084089.rss
     show: Latent Space
 
+  - id: cognitive-revolution
+    type: podcast
+    enabled: true
+    url: https://feeds.megaphone.fm/cognitivrevolution
+    show: The Cognitive Revolution
+
+  - id: dwarkesh-podcast
+    type: podcast
+    enabled: true
+    url: https://www.dwarkeshpatel.com/feed
+    show: Dwarkesh Podcast
+
+  - id: lex-fridman
+    type: podcast
+    enabled: true
+    url: https://lexfridman.com/feed/podcast/
+    show: Lex Fridman Podcast
+
   - id: a16z-podcast
     type: podcast
     enabled: false
