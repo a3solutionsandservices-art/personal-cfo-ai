@@ -1,0 +1,139 @@
+# AI4Tech theme taxonomy — the keystone artifact (PRD §5).
+#
+# Every downstream decision (classify, score, interpret) hangs off this file.
+# It is human-editable configuration and a first-class deliverable, not a
+# constant buried in code. Organised around the lifecycle the mandate is
+# transforming (SDLC inner loop, SDLC outer loop, PDLC) plus the cross-cutting
+# disciplines that determine whether that transformation succeeds.
+#
+# Each theme inherits the defaults below for any field it omits.
+
+defaults:
+  signal_definition: >
+    Concrete techniques, evidence, benchmarks, or decisions that advance
+    AI-native software and product delivery at enterprise scale.
+    NOT signal: intro explainers, hype, consumer demos, restated basics.
+  action_templates: [evaluate, brief-leadership]
+  weight: 0.8
+
+themes:
+  # ---- The lifecycle surface ----
+  - id: sdlc-inner-loop
+    name: Agentic Coding & the SDLC Inner Loop
+    description: >
+      Code generation, agentic IDEs and workspaces, autonomy and control
+      in the developer's edit-run-test loop.
+    current_state: >
+      Rolling out governed remote workspaces; evaluating per-developer
+      AI tool spend governance.
+    signal_definition: >
+      New techniques, benchmarks, failure modes, cost models, or autonomy
+      controls for agentic coding at enterprise scale.
+      NOT signal: intro explainers, hype, consumer demos, restated basics.
+    action_templates: [evaluate, pilot, brief-leadership, update-policy]
+    weight: 1.0
+
+  - id: sdlc-outer-loop
+    name: AI Across the SDLC Outer Loop
+    description: >
+      AI applied to code review, test and QA, CI/CD, release, security
+      scanning, and incident / ops (AIOps).
+    current_state: >
+      Standardising AI code review; piloting AI-assisted incident response.
+    signal_definition: >
+      Concrete patterns or evidence for AI in review, testing, pipelines,
+      release, or operations. NOT signal: single-tool launch announcements.
+    action_templates: [evaluate, pilot, feed-roadmap, update-policy]
+    weight: 1.0
+
+  - id: pdlc-ai
+    name: AI-Native PDLC
+    description: >
+      AI in product discovery, spec-driven development, requirements,
+      roadmapping, and design.
+    current_state: >
+      Introducing spec-driven development; exploring ontology-backed
+      requirements.
+    signal_definition: >
+      Methods or evidence for using AI across the product development
+      lifecycle, including spec-driven development and ontology/context
+      approaches to requirements. NOT signal: generic "AI for PMs" content.
+    action_templates: [evaluate, feed-roadmap, brief-leadership]
+    weight: 0.9
+
+  # ---- Cross-cutting disciplines ----
+  - id: ai-measurement
+    name: AI Measurement & Delivery Outcomes
+    description: >
+      How AI's effect on delivery is measured and tied to business outcomes.
+    current_state: >
+      Building an AI-delivery scorecard; correlating AI usage with throughput.
+    signal_definition: >
+      Metrics, scorecard designs, or evidence on AI's effect on throughput,
+      quality, speed, and business outcomes. NOT signal: vendor ROI claims.
+    action_templates: [add-to-scorecard, validate, brief-leadership]
+    weight: 1.0
+
+  - id: ai-governance
+    name: AI Governance, Guardrails & Assurance
+    description: >
+      Policy, guardrail, and assurance patterns for AI in the delivery lifecycle.
+    current_state: >
+      Establishing guardrails for autonomous agents; defining an eval gate.
+    signal_definition: >
+      Policy, guardrail and evaluation patterns, and risk controls for
+      AI in the delivery lifecycle. NOT signal: high-level ethics commentary.
+    action_templates: [update-policy, evaluate, brief-leadership]
+    weight: 1.0
+
+  - id: adoption-enablement
+    name: Adoption, Enablement & Change Management
+    description: >
+      Driving AI penetration and proficiency across engineering teams.
+    current_state: >
+      Running enablement cohorts; tracking active-usage penetration.
+    signal_definition: >
+      Evidence or methods for driving AI penetration and proficiency across
+      engineering teams. NOT signal: motivational/anecdotal adoption stories.
+    action_templates: [pilot, brief-leadership]
+    weight: 0.9
+
+  - id: model-vendor
+    name: Model & Vendor Landscape
+    description: >
+      Model capabilities, pricing shifts, and vendor moves affecting
+      build-vs-buy and platform decisions.
+    current_state: >
+      Periodically re-evaluating frontier-model build-vs-buy positioning.
+    signal_definition: >
+      New model capabilities, pricing shifts, or vendor moves that change
+      build-vs-buy or platform decisions. NOT signal: incremental benchmarks.
+    action_templates: [evaluate, pilot, watch]
+    weight: 0.8
+
+  - id: platform-devex
+    name: Platform Engineering & Developer Experience
+    description: >
+      The substrate that makes AI-native delivery possible: governed
+      environments, developer experience, and context / knowledge
+      engineering (including organizational memory) for AI agents.
+    current_state: >
+      Building context/knowledge engineering for agents; investing in DevEx.
+    signal_definition: >
+      Platform, DevEx, or context-engineering patterns that enable AI across
+      the lifecycle. NOT signal: tooling reviews without an enablement angle.
+    action_templates: [evaluate, feed-roadmap]
+    weight: 0.8
+
+  - id: payments-ai-data-gov
+    name: Payments-Specific AI & Data Governance
+    description: >
+      AI under PCI / cardholder-data / tokenization constraints; data-handling
+      patterns specific to regulated payments environments.
+    current_state: >
+      Defining PCI-safe data handling for AI; constraining what reaches models.
+    signal_definition: >
+      AI applied under PCI / cardholder-data / tokenization constraints;
+      data-handling patterns specific to regulated payments environments.
+    action_templates: [evaluate, update-policy, brief-leadership]
+    weight: 1.0

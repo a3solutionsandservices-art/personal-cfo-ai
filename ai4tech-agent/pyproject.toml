@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai4tech-agent"
+version = "0.1.0"
+description = "AI4Tech Intelligence Agent — turns external content into a themed, role-relevant briefing with grounded actions."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+dependencies = [
+    "PyYAML>=6.0",
+    "feedparser>=6.0",
+]
+
+[project.optional-dependencies]
+# Real backends. The pipeline runs without these (deterministic offline mode);
+# install them to enable live transcription and Claude-backed judgement.
+llm = ["anthropic>=0.40"]
+stt = ["openai>=1.0"]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+ai4tech = "ai4tech.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

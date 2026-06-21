@@ -1,0 +1,38 @@
+# Source feed configuration (PRD §6.1, FR-SRC-4).
+#
+# Each feed declares an adapter type and its parameters. Adding a new source
+# type (e.g. newsletter, arXiv) is a config + adapter change with no downstream
+# edits (G5). `enabled: false` skips a feed without deleting it.
+#
+# lookback_days bounds how far back a freshly-added feed reaches on first run;
+# items already in the StateStore (by GUID) are always skipped (FR-SRC-2).
+
+defaults:
+  lookback_days: 14
+
+feeds:
+  - id: practical-ai
+    type: podcast
+    enabled: true
+    url: https://changelog.com/practicalai/feed
+    show: Practical AI
+
+  - id: latent-space
+    type: podcast
+    enabled: true
+    url: https://api.substack.com/feed/podcast/1084089.rss
+    show: Latent Space
+
+  - id: a16z-podcast
+    type: podcast
+    enabled: false
+    url: https://feeds.simplecast.com/JGE3yC0V
+    show: a16z Podcast
+
+  # Second-source proof (M6 / G5): the same pipeline absorbs a text feed with
+  # no downstream changes. Disabled by default until a real newsletter is wired.
+  - id: example-newsletter
+    type: newsletter
+    enabled: false
+    url: https://example.com/newsletter/feed.xml
+    show: Example Engineering Newsletter

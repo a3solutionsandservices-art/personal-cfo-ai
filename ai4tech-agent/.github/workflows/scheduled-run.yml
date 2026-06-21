@@ -1,0 +1,46 @@
+# Scheduling is external and boring (PRD FR-ORC-2): a scheduled CI workflow
+# invokes `ai4tech run`. No bespoke scheduler. The job is idempotent, so a
+# re-run after a failure resumes without re-processing or double-sending.
+name: ai4tech-scheduled-run
+
+on:
+  schedule:
+    - cron: "0 13 * * 1" # Mondays 13:00 UTC — weekly digest
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ai4tech-agent
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Persist the SQLite state store across runs so novelty + idempotency
+      # work. Replace with a durable artifact/cache or external storage in prod.
+      - name: Restore state
+        uses: actions/cache@v4
+        with:
+          path: ai4tech-agent/data
+          key: ai4tech-state
+
+      - name: Install
+        run: pip install -e ".[llm,stt]"
+
+      - name: Run
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: ai4tech --verbose run
+
+      - name: Upload brief
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai4tech-brief
+          path: ai4tech-agent/out/*.md
+          if-no-files-found: warn
