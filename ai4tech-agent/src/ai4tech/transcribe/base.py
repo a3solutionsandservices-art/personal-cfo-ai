@@ -35,7 +35,10 @@ class WhisperTranscriber:
         self.model = model
         self._client = client
 
+    WHISPER_MAX_BYTES = 25 * 1024 * 1024  # 25 MB hard limit
+
     def transcribe(self, item: SourceItem) -> Transcript:  # pragma: no cover - network
+        import os
         import tempfile
         import urllib.request
 
@@ -44,12 +47,23 @@ class WhisperTranscriber:
 
             self._client = openai.OpenAI()
 
-        with tempfile.NamedTemporaryFile(suffix=".mp3") as tmp:
-            urllib.request.urlretrieve(item.audio_url, tmp.name)
-            with open(tmp.name, "rb") as fh:
+        with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
+            tmp_path = tmp.name
+
+        try:
+            urllib.request.urlretrieve(item.audio_url, tmp_path)
+            size = os.path.getsize(tmp_path)
+            if size > self.WHISPER_MAX_BYTES:
+                raise ValueError(
+                    f"Audio file {size / 1e6:.1f} MB exceeds Whisper 25 MB limit; "
+                    "skipping transcription"
+                )
+            with open(tmp_path, "rb") as fh:
                 resp = self._client.audio.transcriptions.create(
                     model=self.model, file=fh, response_format="verbose_json"
                 )
+        finally:
+            os.unlink(tmp_path)
         segments = [
             {
                 "start_s": float(getattr(s, "start", 0.0)),
