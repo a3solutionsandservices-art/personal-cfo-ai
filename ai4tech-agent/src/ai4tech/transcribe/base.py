@@ -58,22 +58,29 @@ class WhisperTranscriber:
 
             audio_path = tmp_path
             if size > self.WHISPER_MAX_BYTES:
-                # Compress to mono MP3 at 32 kbps (speech-adequate quality).
-                # Reduces a 45 MB file to ~4 MB and a 130 MB file to ~12 MB.
-                # ffmpeg is pre-installed on ubuntu-latest GitHub Actions runners.
+                # Compress to mono 16 kHz MP3 at 32 kbps (speech-adequate).
+                # 45 MB → ~4 MB, 131 MB → ~12 MB — both under Whisper's limit.
+                # The workflow installs ffmpeg explicitly; this guard surfaces a
+                # clear error if the binary is ever absent.
                 with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as ctmp:
                     compressed_path = ctmp.name
-                result = subprocess.run(
-                    [
-                        "ffmpeg", "-y", "-i", tmp_path,
-                        "-ac", "1",          # mono
-                        "-ar", "16000",      # 16 kHz — Whisper's native rate
-                        "-b:a", "32k",       # 32 kbps bitrate
-                        "-f", "mp3",
-                        compressed_path,
-                    ],
-                    capture_output=True,
-                )
+                try:
+                    result = subprocess.run(
+                        [
+                            "ffmpeg", "-y", "-i", tmp_path,
+                            "-ac", "1",          # mono
+                            "-ar", "16000",      # 16 kHz — Whisper's native rate
+                            "-b:a", "32k",       # 32 kbps bitrate
+                            "-f", "mp3",
+                            compressed_path,
+                        ],
+                        capture_output=True,
+                    )
+                except FileNotFoundError:
+                    raise RuntimeError(
+                        f"ffmpeg not found; install it so audio >{self.WHISPER_MAX_BYTES // 1024 // 1024} MB "
+                        "can be compressed before sending to Whisper"
+                    )
                 if result.returncode != 0:
                     raise RuntimeError(
                         f"ffmpeg compression failed (exit {result.returncode}): "
