@@ -18,10 +18,20 @@ class PodcastAdapter:
     def __init__(self, feed: FeedConfig) -> None:
         self.feed = feed
 
+    # Mimics a real podcast client so CDNs / Substack don't return 403.
+    _USER_AGENT = (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    )
+
     def fetch_new(self) -> list[SourceItem]:
         import feedparser  # lazy import; only the podcast path needs it
 
-        parsed = feedparser.parse(self.feed.url)
+        parsed = feedparser.parse(
+            self.feed.url,
+            agent=self._USER_AGENT,
+            request_headers={"User-Agent": self._USER_AGENT},
+        )
         cutoff = datetime.now(timezone.utc) - timedelta(days=self.feed.lookback_days)
         items: list[SourceItem] = []
         for entry in parsed.entries:

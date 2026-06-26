@@ -22,12 +22,17 @@ jobs:
           python-version: "3.12"
 
       # Persist the SQLite state store across runs so novelty + idempotency
-      # work. Replace with a durable artifact/cache or external storage in prod.
+      # work. Rolling key (run_id suffix) means a new cache entry is written
+      # every run; restore-keys picks up the most recent prior entry.
       - name: Restore state
         uses: actions/cache@v4
         with:
           path: ai4tech-agent/data
-          key: ai4tech-state
+          key: ai4tech-state-${{ github.run_id }}
+          restore-keys: ai4tech-state-
+
+      - name: Install system deps
+        run: sudo apt-get install -y --no-install-recommends ffmpeg
 
       - name: Install
         run: pip install -e ".[llm,stt]"
